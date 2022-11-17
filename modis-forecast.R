@@ -8,6 +8,8 @@ library(tmap)
 ## Create a climatology forecast using monthly averages
 box <- st_bbox(us_states)
 
+fs::dir_create("forecast")
+
 
 # Ick work around rstac bug
 mysign <- function(href) {
@@ -20,6 +22,14 @@ mysign <- function(href) {
   return(out)
 }
 
+sign_all <- function(hrefs) {
+  map_chr(hrefs,
+          function(x) {
+            out <- mysign(x)
+            Sys.sleep(10)
+            out
+          })
+}
 
 
 ## too many items, must subset datetime range better
@@ -41,7 +51,6 @@ date <- purrr::map_chr(matches$features, list("properties", "created"))
 urls <- map_chr(matches$features, list("assets", "Lai_500m", "href"))
 usa_all <- tibble(v,h, date, urls) |> mutate(year=year(date), month=month(date), week = week(date))
 
-
 usa <- usa_all |> group_by(v,h, year, week) |> slice_max(date)
 
 month_groups <- usa |>
@@ -50,26 +59,25 @@ month_groups <- usa |>
 
 
 ## Example: average 1 month-group across one tile:
+forecast <- function(x, ...) {
+  name <- paste0("v", unique(x$v), "-h", unique(x$h), "-",
+                 month(unique(as.integer(x$month)), label = TRUE))
+  
+  message(name)
+  
+  urls <- sign_all(x$urls)
+  
+  # ~ 1 min per group
+  read_stars(urls, along = "time") |>
+  st_apply(1:2, mean) |>
+  write_stars(glue::glue("forecast/{name}.tif"))
+}
 
-set <- month_groups[[1]]
+usa |>
+  group_by(v, h, month) |>
+  dplyr::group_map(forecast, .keep=TRUE)
 
 
-## Grab the tiles
-urls <- map(set,
-            function(x) {
-              out <- mysign(x)
-              Sys.sleep(10)
-              out
-              }
-            )
-
-# ~ 1 min per group
-X <- read_stars(urls, along = "time")
-bench::bench_time({
-  X |>
-    st_apply(1:2, mean) |>
-    write_stars("forecast/test.tif")
-})
 
 
 
