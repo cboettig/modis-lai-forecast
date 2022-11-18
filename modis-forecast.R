@@ -27,10 +27,9 @@ matches <-
   stac("https://planetarycomputer.microsoft.com/api/stac/v1") |>
   stac_search(collections = "modis-15A2H-061",
               datetime = "2018-01-01/2022-11-15",
-              bbox = c(box)) |>
-  post_request() |>
-  items_sign(sign_fn = sign_planetary_computer()) |>
-  items_fetch()
+              bbox = c(box),
+              limit=10) |>
+  get_request()
 
 length(matches$features)
 

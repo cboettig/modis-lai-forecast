@@ -79,15 +79,17 @@ get_mosaic <- function(end) {
 
 #as.Date(strptime(week(today()), format="%W"))
 #today <- today()
-today <- as.Date("2022-11-16")
+today <- as.Date("2020-12-16")
 
 bench::bench_time({
-dates <- seq(today-years(4),today, by = 'week')
+#dates <- seq(today-years(4),today, by = 'week')
+dates <- seq(as.Date("2020-08-07"),as.Date("2022-01-01"), by = 'week')
+
 walk(dates, get_mosaic)
 })
 
 
 pngs <- fs::dir_ls(glob="*.png")
-gifski::gifski(pngs, "modis.gif", width = 800, height = 300, loop = FALSE, delay = 0.1)
+gifski::gifski(pngs, "modis.gif", width = 800, height = 300, loop = FALSE, delay = 0.01)
 
 
