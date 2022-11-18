@@ -25,6 +25,19 @@ matches <-
               limit=10) |>
   get_request()
 
+
+# Ick work around rstac bug
+mysign <- function(href) {
+  x <- parse_url(href)
+  y <- glue::glue("{scheme}://{hostname}/{path}", scheme = x$scheme, hostname = x$hostname, path = x$path)
+  resp <- GET(paste0("https://planetarycomputer.microsoft.com/api/sas/v1/sign?href=", y))
+  stop_for_status(resp)
+  url <- httr::content(resp)
+  out <- paste0("/vsicurl/",url$href)
+  return(out)
+}
+
+
 url <- mysign(matches$features[[1]]$assets$Lai_500m$href)
 x <- read_stars(url, proxy=TRUE)
 
