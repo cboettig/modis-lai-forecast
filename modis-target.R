@@ -10,13 +10,14 @@ library(tmap)
 box <- st_bbox(us_states)
 
 # Ick work around rstac bug
-mysign <- function(href) {
-  x <- parse_url(href)
+mysign <- function(href, vsicurl = TRUE) {
+  x <- httr::parse_url(href)
   y <- glue::glue("{scheme}://{hostname}/{path}", scheme = x$scheme, hostname = x$hostname, path = x$path)
-  resp <- GET(paste0("https://planetarycomputer.microsoft.com/api/sas/v1/sign?href=", y))
-  stop_for_status(resp)
+  resp <- httr::GET(paste0("https://planetarycomputer.microsoft.com/api/sas/v1/sign?href=", y))
+  httr::stop_for_status(resp)
   url <- httr::content(resp)
-  out <- paste0("/vsicurl/",url$href)
+  out <- url$href
+  if(vsicurl) out <- glue::glue("/vsicurl/",url$href)
   return(out)
 }
 

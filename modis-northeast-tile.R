@@ -8,7 +8,7 @@ library(tmap)
 ## Create a climatology forecast using monthly averages
 box <- st_bbox(us_states)
 
-sites <- read_csv(paste0("https://github.com/eco4cast/neon4cast-noaa-download/",
+sites <- readr::read_csv(paste0("https://github.com/eco4cast/neon4cast-noaa-download/",
        "raw/master/noaa_download_site_list.csv"))
 
 z <- sites |> filter(site_id == "HARV")
@@ -20,7 +20,7 @@ coords <- c(x - buffer, y- buffer, x+buffer, y+ buffer)
 matches <-
   stac("https://planetarycomputer.microsoft.com/api/stac/v1") |>
   stac_search(collections = "modis-15A2H-061",
-              datetime = "2022-06-01/2022-08-01",
+              datetime = "2022-09-01/2022-10-01",
               bbox = coords,
               limit=10) |>
   get_request()
@@ -36,7 +36,7 @@ mysign <- function(href) {
   out <- paste0("/vsicurl/",url$href)
   return(out)
 }
-
+date <- matches$features[[1]]$properties$created
 
 url <- mysign(matches$features[[1]]$assets$Lai_500m$href)
 x <- read_stars(url, proxy=TRUE)
@@ -48,7 +48,8 @@ x |>
             palette = viridisLite::mako(100),
             legend.show = FALSE) +
   tm_shape(sites_sf) + tm_markers(col = "darkred") +
-  tm_text("site_id", size = 0.5, col = "white")
+  tm_text("site_id", size = 0.5, col = "white") +
+  tm_credits(paste("MODIS LAI on", as.Date(date)))
 
 
 

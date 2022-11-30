@@ -5,9 +5,10 @@ library(httr)
 library(stars)
 library(spData)
 library(tmap)
-## Create a climatology forecast using monthly averages
-box <- st_bbox(us_states)
 
+## Create a climatology forecast using monthly averages
+
+box <- st_bbox(us_states)
 fs::dir_create("forecast")
 
 
@@ -61,11 +62,11 @@ month_groups <- usa |>
 forecast <- function(x, ...) {
   name <- paste0("v", unique(x$v), "-h", unique(x$h), "-",
                  month(unique(as.integer(x$month)), label = TRUE))
-  
+
   message(name)
-  
+
   urls <- sign_all(x$urls)
-  
+
   # ~ 1 min per group
   read_stars(urls, along = "time") |>
   st_apply(1:2, mean) |>
