@@ -1,83 +1,92 @@
-library(tidyverse)
-library(lubridate)
+# remotes::install_github("OldLipe/rstac@b-0.9.1")
+# remotes::install_github("appelmar/gdalcubes_R")
+# remotes::install_github("r-spatial/stars")
 library(rstac)
-library(httr)
+library(gdalcubes)
 library(stars)
-library(spData)
-library(tmap)
+gdalcubes_options(parallel = 24)
+box <- c(-75, 40, -70, 44)
 
-## Create a climatology forecast using monthly averages
-
-box <- st_bbox(us_states)
-fs::dir_create("forecast")
-
-
-# Ick work around rstac bug
-mysign <- function(href) {
-  x <- parse_url(href)
-  y <- glue::glue("{scheme}://{hostname}/{path}", scheme = x$scheme, hostname = x$hostname, path = x$path)
-  resp <- GET(paste0("https://planetarycomputer.microsoft.com/api/sas/v1/sign?href=", y))
-  stop_for_status(resp)
-  url <- httr::content(resp)
-  out <- paste0("/vsicurl/",url$href)
-  return(out)
-}
-
-sign_all <- function(hrefs) {
-  map_chr(hrefs,
-          function(x) {
-            out <- mysign(x)
-            Sys.sleep(10)
-            out
-          })
-}
-
-
-## too many items, must subset datetime range better
 matches <-
   stac("https://planetarycomputer.microsoft.com/api/stac/v1") |>
   stac_search(collections = "modis-15A2H-061",
-              datetime = "2018-01-01/2022-11-15",
-              bbox = c(box),
-              limit=10) |>
-  get_request()
+              datetime = "2018-01-01/2022-12-01",
+              bbox = c(box)) |>
+  get_request() |>
+  items_fetch() |>
+  items_sign(sign_fn = sign_planetary_computer())
 
-length(matches$features)
-
-## Some tiles have been visited multiple times, get most recent for each US-intesecting tile
-v <- purrr::map_int(matches$features, list("properties", "modis:vertical-tile"))
-h <- purrr::map_int(matches$features, list("properties", "modis:horizontal-tile"))
-date <- purrr::map_chr(matches$features, list("properties", "created"))
-urls <- map_chr(matches$features, list("assets", "Lai_500m", "href"))
-usa_all <- tibble(v,h, date, urls) |> mutate(year=year(date), month=month(date), week = week(date))
-
-usa <- usa_all |> group_by(v,h, year, week) |> slice_max(date)
-
-month_groups <- usa |>
-  group_by(v, h, month) |>
-  dplyr::group_map( \(x, ...) x$urls)
+cube <- gdalcubes::stac_image_collection(matches$features,
+                                         asset_names = "Lai_500m",
+                                         duration = "start")
+v <- cube_view(srs = "EPSG:4326",
+               extent = list(t0 = "2018-11-01", t1 = "2022-12-01",
+                             left = box[1], right = box[3],
+                             top = box[4], bottom = box[2]),
+               nx = 1000, ny = 1000, dt= "P16D",
+               aggregation = "mean", resampling = "near"
+)
 
 
-## Example: average 1 month-group across one tile:
-forecast <- function(x, ...) {
-  name <- paste0("v", unique(x$v), "-h", unique(x$h), "-",
-                 month(unique(as.integer(x$month)), label = TRUE))
+## A climatology forecast -- monthly averages via temporal stars::aggregate
+raster_cube(cube, v) |> write_tif("target")
 
-  message(name)
+## do monthly averages with stars, since we can't do with gdalcubes (yet?)
+library(stars)
+fs <- fs::dir_ls("target/")
+dates <- as.POSIXct(stringr::str_extract(fs, "\\d{4}-\\d{2}-\\d{2}"))
+x = read_stars(fs, proxy=TRUE,along = "time") |> stars::st_downsample(6)
+x = st_set_dimensions(x, 3, values = dates,  names = "time")
+y = aggregate(x, by = \(x) lubridate::month(x, label=TRUE), FUN=mean)
+# y |> write_stars("forecast.tif")
+plot(y, col = viridisLite::mako(100),  breaks="kmeans")
 
-  urls <- sign_all(x$urls)
 
-  # ~ 1 min per group
-  read_stars(urls, along = "time") |>
-  st_apply(1:2, mean) |>
-  write_stars(glue::glue("forecast/{name}.tif"))
+raster_cube(cube, v) |> filter_time()
+
+
+
+# https://lpdaac.usgs.gov/documents/926/MOD15_User_Guide_V61.pdf
+# 255 NA
+# 254 land cover assigned as perennial salt or inland fresh water
+# 253 land cover assigned as barren, sparse vegetation (rock, tundra, desert)
+# 252 land cover assigned as perennial snow, ice
+# 251 land cover assigned as “permanent” wetlands/inundated marshlands
+# 250 land cover assigned as urban/built−up
+# 249 land cover assigned as “unclassified” or not able to determine
+
+## We can view this 'target' data in animation
+raster_cube(cube,v) |> 
+  animate(zlim=c(0,70), col = viridisLite::mako, fps=2, save_as = "northeast.gif")
+
+## We can use custom functions to define forecasts
+RW <- function(v) {
+  v[1] + rnorm(1,0,1)
 }
-
-usa |>
-  group_by(v, h, month) |>
-  dplyr::group_map(forecast, .keep=TRUE)
+# y <- raster_cube(cube, v) |> apply_pixel(names="predicted", FUN=RW)
 
 
+## example chunk-apply  
+#f <- function() {
+#  x <- read_chunk_as_array()
+#  out <- reduce_time(x, function(x) {
+#    cor(x[1,], x[2,], use="na.or.complete", method = "kendall")
+#  }) 
+#  write_chunk_from_array(out)
+#}
+#L8.cor = chunk_apply(L8.cube, f)
 
-
+### Regression-based forecast?
+#raster_cube(L8.col, cube_view(view = v.subarea.60m, dx=200), mask = L8.clear_mask) |>
+#  select_bands(c("B04","B05")) |>
+#  apply_pixel("(B05-B04)/(B05+B04)", names = "NDVI") |>
+#  reduce_time(names=c("ndvi_trend"), FUN=function(x) {
+#    z = data.frame(t=1:ncol(x), ndvi=x["NDVI",])
+#    result = NA
+#    if (sum(!is.na(z$ndvi)) > 3) {
+#      result = coef(lm(ndvi ~ t, z, na.action = na.exclude))[2]
+#    }
+#    return(result) 
+#  }) |>
+#  plot(key.pos=1, col=viridis::viridis)
 
