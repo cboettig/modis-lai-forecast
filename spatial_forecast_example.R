@@ -1,5 +1,14 @@
+# this script will 
+# a) ingest data
+# b) run simple model
+# c) publish results
+
 suppressPackageStartupMessages(source("packages.R"))
 for (f in list.files(here::here("R"), full.names = TRUE)) source (f)
+
+
+# Data ingest -------------------------------------------------------------
+# selecting 5 example locations
 
 url <- "/vsicurl/https://minio.carlboettiger.info/public-biodiversity/fire22_1.gdb"
 st_layers(url)
