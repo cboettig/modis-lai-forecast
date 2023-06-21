@@ -1,6 +1,4 @@
 # needs some dev versions of packages for now
-# remotes::install_github("OldLipe/rstac@b-0.9.1")
-# remotes::install_github("appelmar/gdalcubes_R")
 library(rstac)
 library(gdalcubes)
 library(spData)
