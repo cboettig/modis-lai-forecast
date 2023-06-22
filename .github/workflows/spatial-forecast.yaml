@@ -19,12 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install
-        shell: Rscript {0}
-        run: |
-          install.packages("here")
-
-      - name: Process submissions
+      - name: Install packages from renv.lock (with cache)
+        uses: r-lib/actions/setup-renv@v2
+        with:
+          cache-version: 3
+          
+      - name: Run example
         shell: Rscript {0}
         run: |
           source("spatial_forecast_example.R")
