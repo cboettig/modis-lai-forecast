@@ -22,9 +22,9 @@ jobs:
       - name: Install
         shell: Rscript {0}
         run: |
-          install.packages("here")
+          install.packages(c("rstac", "gdalcubes", "assertthat", "here", "scoringRules"))
 
-      - name: Process submissions
-        shell: Rscript {0}
-        run: |
-          source("spatial_forecast_example.R")
+      # - name: Run example
+      #   shell: Rscript {0}
+      #   run: |
+      #     source("spatial_forecast_example.R")
