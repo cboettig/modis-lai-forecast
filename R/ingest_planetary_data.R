@@ -1,27 +1,40 @@
 #' Download data from Microsoft planetary comuputer 
 #'
-#' @param collection Name of planetary collection
-#' @param asset_name Name of asset name
-#' @param start_date Start date for data in format yyyy-mm-dd
+#' @param start_date Start date for data in date format yyyy-mm-dd
 #' @param end_date End date for data in format yyyy-mm-dd
 #' @param box Vector of values (xmin, ymin, xmax, ymax)
-#' @return An image_collection_cube pointer
+#' @param collection Name of planetary collection
+#' @param asset_name Name of asset name
+#' @param srs
+#' @param dx
+#' @param dy
+#' @param dt
+#' @return A data cube proxy object
 #' @examples 
-#' ingest_planetary_data(collection = "modis-15A2H-061", asset_name = "Lai_500m", start_date = "2022-01-01", end_date = "2023-07-01", box =  c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
-# roxygen
-
-ingest_planetary_data <- function(collection = "modis-15A2H-061",
+#' ingest_planetary_data(start_date = lubridate::date("2022-01-01"), end_date = lubridate::date("2023-07-01"), box =  c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
+#' @export
+#' 
+ingest_planetary_data <- function(start_date,
+                                  end_date,
+                                  box,
+                                  collection = "modis-15A2H-061",
                                   asset_name = "Lai_500m",
-                                  start_date = "2022-01-01",
-                                  end_date = "2023-07-01",
-                                  box){
+                                  srs = "EPSG:4326",
+                                  dx = 0.1, 
+                                  dy = 0.1, 
+                                  dt = "P30D",
+                                  ...){
   
-  # defaults for dx dy and time
-  # srs
-  # user needs to ensure box is same as source
+  # check dates
+  assertthat::is.date(start_date)
+  assertthat::is.date(end_date)
+  start_date = ymd(start_date)
+  end_date = ymd(end_date)
   
-  # TODO check format of dates and box
+  # check box
+  assertthat::are_equal(length(box), 4)
   
+  # get STACItemCollection
   matches <-
     stac("https://planetarycomputer.microsoft.com/api/stac/v1") |>
     stac_search(collections = collection,
@@ -31,18 +44,20 @@ ingest_planetary_data <- function(collection = "modis-15A2H-061",
     items_fetch() |>
     items_sign(sign_fn = sign_planetary_computer())
   
+  # get image collection object
   cube <- gdalcubes::stac_image_collection(matches$features,
                                            asset_names = asset_name,
                                            duration = "start")
   
-  v <- cube_view(srs = "EPSG:4326", #lat/lon
-                 extent = list(t0 = start_date, t1 = end_date,
+  # set dimensions of the cube
+  v <- cube_view(srs = srs, #lat/lon
+                 extent = list(t0 = as.character(start_date), t1 = as.character(end_date),
                                left = box[1], right = box[3],
                                top = box[4], bottom = box[2]),
-                 dx = 0.1, dy = 0.1, dt= "P30D",
+                 dx = dx, dy = dy, dt= dt,
                  aggregation = "mean", resampling = "near")
   
-  # continue with code from disturbace.qmd
-  d <- raster_cube(cube, v)
-  return(d)
+  # create proxy data cube
+  proxy_cube <- raster_cube(cube, v)
+  return(proxy_cube)
 }
