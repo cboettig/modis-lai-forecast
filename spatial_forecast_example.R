@@ -18,4 +18,6 @@ august_complex <- fire |> filter(FIRE_NAME == "AUGUST COMPLEX")
 
 box <- august_complex |> st_transform(crs=4326) |> st_bbox()
 
-cuberast <- ingest_planetary_data(collection = "modis-15A2H-061", asset_name = "Lai_500m", start_date = "2022-01-01", end_date = "2023-07-01", box = c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
+cuberast <- ingest_planetary_data(collection = "modis-15A2H-061", asset_name = "Lai_500m", start_date = "2002-01-01", end_date = "2023-07-01", box = c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
+
+
