@@ -1,7 +1,7 @@
 #' Download data from Microsoft planetary comuputer 
 #'
-#' @param start_date start date format yyyy-mm-dd
-#' @param end_date end date in format yyyy-mm-dd
+#' @param start_date start date as character format yyyy-mm-dd
+#' @param end_date end date as character format yyyy-mm-dd
 #' @param box numberic vector in the format of (xmin, ymin, xmax, ymax)
 #' @param collection name of planetary collection
 #' @param asset_name mame of asset 
@@ -13,7 +13,7 @@
 #' @param resampling resampling method used in gdalwarp when images are read, can be "near", "bilinear", "bicubic" or others as supported by gdalwarp (see https://gdal.org/programs/gdalwarp.html)
 #' @return A data cube proxy object
 #' @examples 
-#' ingest_planetary_data(start_date = lubridate::date("2022-01-01"), end_date = lubridate::date("2023-07-01"), box =  c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
+#' ingest_planetary_data(start_date = "2022-01-01", end_date = "2023-07-01", box =  c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
 #' @export
 #' 
 ingest_planetary_data <- function(start_date,
@@ -27,12 +27,6 @@ ingest_planetary_data <- function(start_date,
                                   dt = "P30D",
                                   aggregation = "mean",
                                   resampling = "near"){
-  
-  # check dates
-  # assertthat::is.date(start_date)
-  # assertthat::is.date(end_date)
-  # start_date = ymd(start_date)
-  # end_date = ymd(end_date)
   
   # check box
   assertthat::are_equal(length(box), 4)
