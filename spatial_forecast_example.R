@@ -14,3 +14,8 @@ forecast_date <- '2023-06-22'
 ## generate climatology forecast using spat_climatology function
 spat_climatology(cuberast = cuberast_ex1,
                  date = forecast_date)
+
+## generate scores
+scoring_spat_ensemble(fc_dir = 'climatology',
+                      target_dir = 'targets',
+                      scores_dir = 'scores')
