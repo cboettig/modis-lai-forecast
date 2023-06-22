@@ -1,4 +1,13 @@
-
+#' Download data from Microsoft planetary comuputer 
+#'
+#' @param collection Name of planetary collection
+#' @param asset_name Name of asset name
+#' @param start_date Start date for data in format yyyy-mm-dd
+#' @param end_date End date for data in format yyyy-mm-dd
+#' @param box Vector of values (xmin, ymin, xmax, ymax)
+#' @return An image_collection_cube pointer
+#' @examples 
+#' ingest_planetary_data(collection = "modis-15A2H-061", asset_name = "Lai_500m", start_date = "2022-01-01", end_date = "2023-07-01", box =  c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
 # roxygen
 
 ingest_planetary_data <- function(collection = "modis-15A2H-061",
@@ -6,6 +15,10 @@ ingest_planetary_data <- function(collection = "modis-15A2H-061",
                                   start_date = "2022-01-01",
                                   end_date = "2023-07-01",
                                   box){
+  
+  # defaults for dx dy and time
+  # srs
+  # user needs to ensure box is same as source
   
   # TODO check format of dates and box
   
@@ -31,5 +44,5 @@ ingest_planetary_data <- function(collection = "modis-15A2H-061",
   
   # continue with code from disturbace.qmd
   d <- raster_cube(cube, v)
-  
+  return(d)
 }
