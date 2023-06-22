@@ -25,6 +25,6 @@ jobs:
           install.packages(c("rstac", "gdalcubes", "assertthat", "here", "scoringRules"))
 
       # - name: Run example
-      #   shell: Rscript {0}
-      #   run: |
-      #     source("spatial_forecast_example.R")
+        shell: Rscript {0}
+        run: |
+          source("spatial_forecast_example.R")
