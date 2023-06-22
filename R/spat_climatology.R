@@ -37,4 +37,6 @@ spat_climatology <- function(cuberast, date, dir = 'climatology'){
   
   ## write geotif file
   cuberast %>% gdalcubes::select_time(subset) %>% write_tif(dir = dir)
+  
+  return(dir)
 }
