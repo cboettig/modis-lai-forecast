@@ -29,10 +29,10 @@ ingest_planetary_data <- function(start_date,
                                   resampling = "near"){
   
   # check dates
-  assertthat::is.date(start_date)
-  assertthat::is.date(end_date)
-  start_date = ymd(start_date)
-  end_date = ymd(end_date)
+  # assertthat::is.date(start_date)
+  # assertthat::is.date(end_date)
+  # start_date = ymd(start_date)
+  # end_date = ymd(end_date)
   
   # check box
   assertthat::are_equal(length(box), 4)
