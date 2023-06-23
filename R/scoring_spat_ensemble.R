@@ -35,4 +35,6 @@ scoring_spat_ensemble <- function(fc_dir, target_dir, scores_dir){
   ## write tif files for crps and log scores
   writeRaster(crps_scores, filename = paste0(scores_dir, '/crps_scores.tif'))
   writeRaster(logs_scores, filename = paste0(scores_dir, '/logs_scores.tif'))
+  
+  return(scores_dir)
 }
