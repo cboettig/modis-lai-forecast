@@ -1,4 +1,5 @@
 # modis-lai-forecast
+project team: John Smith, David Durden,  Emma Mendelsohn, Carl Boettiger
 
 This repo holds code for a spatially explicit forecasting challenge pipeline to benchmark spatial models using MODIS leaf index data. In this example we focus on locations of wildfire burns and recovery.
 
@@ -7,8 +8,9 @@ This repo holds code for a spatially explicit forecasting challenge pipeline to 
 
 
 ## Site selection
+Our goal is to select locations across a variety of environments and burn conditions. Currently we have two sites selected from Monitoring Trends in Burn Severity ([MTBS](https://www.mtbs.gov/)). These shapefiles are available in the `/shp` directory.
 - California August complex fire
-- Colorodo East Troublesome
+- Colorado East Troublesome
 
 ## Functions
 - `fire_bbox()` reads in a fire boundary shapefile and determines a bounding box for grabbing MODIS data with a padding option. 
