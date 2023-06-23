@@ -27,9 +27,3 @@ scored_forecast_dir <- scoring_spat_ensemble(fc_dir = ensemble_forecast_dir,
                                              scores_dir = 'scores')
 
 # Upload to AWS -----------------------------------------------------------
-# TODO
-
-
-# Next steps --------------------------------------------------------------
-# TODO deliverable: this file, .qmd, flowchart 
-# TODO automation logic (setting dates for data download and forecast forward)
