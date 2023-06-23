@@ -32,5 +32,6 @@ This project uses `renv` for package management. Use `renv::restore()` to load p
     - NEON SOAP: https://www.neonscience.org/field-sites/soap 
     - Arizona rapid burn/recovery
     - Eastern canada fires
-- Automation logic
-- 
+- Ingest addition data streams (e.g., burn intensity from MTBS)
+- Deployment for submissions
+
