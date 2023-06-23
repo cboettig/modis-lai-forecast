@@ -1161,6 +1161,25 @@
       ],
       "Hash": "18e9c28c1d3ca1560ce30658b22ce104"
     },
+    "minio": {
+      "Package": "minio",
+      "Version": "0.0.1",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "cboettig",
+      "RemoteRepo": "minio",
+      "RemoteRef": "main",
+      "RemoteSha": "1dc86a1d192545e0d6de9cce53b67b17cd467c3a",
+      "Requirements": [
+        "fs",
+        "glue",
+        "processx",
+        "tools",
+        "utils"
+      ],
+      "Hash": "adf20b1a05dcc267ddc0f8558bb343ed"
+    },
     "modelr": {
       "Package": "modelr",
       "Version": "0.1.11",
