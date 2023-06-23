@@ -23,6 +23,9 @@ Functions are stored in the `R/` directory.
 - `scoring_spat_ensemble()` assigns CRPS (Continuous Ranked Probability Scores) and Logarithmic Scores for a given target file and ensemble forecast. Serializes scored geotiff to disk.
 - `na_bootstrap_fun()` is used internally for re-sampling during creation of climatological forecasts. The function takes a vector `x` of (possibly missing) data and fills `NA` values using a bootstrap re-sampling of non-`NA` values.
 
+## Environment
+This project uses `renv` for package management. Use `renv::restore()` to load project packages.
+
 ## Next steps
 - Ingest additional fire sites. Potential locations
     - NEON GRSM: https://www.neonscience.org/
