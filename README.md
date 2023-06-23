@@ -11,11 +11,11 @@ This repo holds code for a spatially explicit forecasting challenge pipeline to 
 - Colorodo East Troublesome
 
 ## Functions
-`fire_bbox()` reads in a fire boundary shapefile and determines a bounding box for grabbing MODIS data with a padding option.
-`ingest_planetary_data()` downloads data from Microsoft planetary comuputer and returns a `gdalcube` data cube proxy object.
-`create_target_file()` subsets the data cube and serializes target geotiff to disk. 
-`spat_climatology()` creates climatology predictions and serializes prediction geotiff to disk.
-`scoring_spat_ensemble()` assigns crps and logs scores and serializes scored geotiff to disk. 
+- `fire_bbox()` reads in a fire boundary shapefile and determines a bounding box for grabbing MODIS data with a padding option. 
+- `ingest_planetary_data()` downloads data from Microsoft planetary comuputer and returns a `gdalcube` data cube proxy object. 
+- `create_target_file()` subsets the data cube and serializes target geotiff to disk.  
+- `spat_climatology()` creates climatology predictions and serializes prediction geotiff to disk. 
+- `scoring_spat_ensemble()` assigns crps and logs scores and serializes scored geotiff to disk.  
 
 ## Next steps
 - Ingest additional fire sites. Potential locations
