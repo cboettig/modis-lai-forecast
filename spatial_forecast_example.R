@@ -2,19 +2,19 @@ suppressPackageStartupMessages(source("packages.R"))
 for (f in list.files(here::here("R"), full.names = TRUE)) source (f)
 
 # Bounding box ------------------------------------------------------------
-# TODO add function and documentation for how this was selected
-# shapefile to be added to github
 # pull box, mask
+fire_box <- fire_bbox(fire = "august_complex", pad_box = TRUE)
 
 # Ingest data ------------------------------------------------------------
 raster_cube <- ingest_planetary_data(start_date = "2002-01-01", 
                                      end_date = "2023-07-01", 
-                                     box = c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
+                                     box = fire_box$bbox)
 
 # Generate targets dir/files ------------------------------------------------------------
 target_forecast_dir <- create_target_file(cuberast = raster_cube, 
                                           date = '2023-06-22',
-                                          dir = 'targets')
+                                          dir = 'targets',
+                                          mask = fire_box$maskLayer)
 
 # Forecast ----------------------------------------------------------------
 ensemble_forecast_dir <- spat_climatology(cuberast = raster_cube,
