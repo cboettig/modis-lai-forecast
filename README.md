@@ -15,9 +15,7 @@ This repo holds code for a spatially explicit forecasting challenge pipeline to 
 `ingest_planetary_data()` downloads data from Microsoft planetary comuputer and returns a `gdalcube` data cube proxy object.
 `create_target_file()` subsets the data cube and serializes target geotiff to disk. 
 `spat_climatology()` creates climatology predictions and serializes prediction geotiff to disk.
-
-
-The data would be downloaded using ingest_planetary_data() function to grab data for the polygon of interest and defined data range. A climatology forecast approach will be used as a baseline model that will be evaluated against target MODIS data. 
+`scoring_spat_ensemble()` assigns crps and logs scores and serializes scored geotiff to disk. 
 
 ## Next steps
 - Ingest additional fire sites. Potential locations
