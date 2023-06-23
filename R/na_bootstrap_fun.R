@@ -1,3 +1,13 @@
+#' Perform bootstrap re-sampling for NA values
+#'
+#' @param x numeric; vector of data, possibly with NA values
+#' @return numeric; vector of re-sampled values
+#' @examples 
+#' x <- c(1, 2, 3, NA)
+#' na_boostrap_fun(x)
+#' @export
+#' 
+
 na_bootstrap_fun <- function(x){
   ## check if all x values are NA. stop if so 
   if (all(is.na(x))) stop('All values NA, cannot perform bootstrap')
