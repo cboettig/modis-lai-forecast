@@ -35,7 +35,7 @@ fire_bbox <- function(
     fire = c("august_complex","east_troublesome")[1],
     crs = "EPSG:4326",
     pad_box = FALSE,
-    pad_degree = 0.1){
+    pad_degree = 0.5){
   #Input directory
   dirInp <- paste0(dir,"/",fire)
   
@@ -55,6 +55,9 @@ fire_bbox <- function(
     out$bbox[3] <- out$bbox$xmax + pad_degree
     out$bbox[4] <- out$bbox$ymax + pad_degree
   }
+  
+  #Create a mask layer
+  out$maskLayer <- sf::st_geometry(out$shp) |> sf::st_transform(crs=crs) 
   
   #Return output list with shp and bbox
   return(out)
