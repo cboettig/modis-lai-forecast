@@ -1,6 +1,25 @@
-## FILE: spat_climatology.R
-## DATE: June 22, 2023
-## AUTHORS: John Smith, Carl Boettiger, Emma Mendelsohn, David Durden
+#' Build spatial climatology forecast 
+#'
+#' @param cuberast object of class cube; raster cube to generate forecasts on
+#' @param date date as character format yyyy-mm-dd; date to generate forecast
+#' @param dir character; directory to store geotiff files. If the specified directory does not exist, it is created
+#' @return character; directory that geotiff files are written to.
+#' @examples 
+#' # Bounding box ------------------------------------------------------------
+#' # pull box, mask
+#' fire_box <- fire_bbox(fire = "august_complex", pad_box = TRUE)
+#' # Ingest data ------------------------------------------------------------
+#' raster_cube <- ingest_planetary_data(start_date = "2002-01-01", 
+#'                                      end_date = "2023-07-01", 
+#'                                      box = fire_box$bbox)
+#' # Generate targets dir/files ------------------------------------------------------------
+#' # Forecast ----------------------------------------------------------------
+#' ensemble_forecast_dir <- spat_climatology(cuberast = raster_cube,
+#'                                           date = '2023-06-22',
+#'                                           dir = 'climatology')
+#' @export
+#' 
+
 
 spat_climatology <- function(cuberast, date, dir = 'climatology'){
   ## FUNCTION: spat_climatology
