@@ -13,6 +13,9 @@ Our goal is to select locations across a variety of environments and burn condit
 - Colorado East Troublesome
 
 ## Functions
+
+Functions are stored in the `R/` directory.
+
 - `fire_bbox()` reads in a fire boundary shapefile and determines a bounding box for grabbing MODIS data with a padding option. 
 - `ingest_planetary_data()` downloads data from Microsoft planetary comuputer and returns a `gdalcube` data cube proxy object. 
 - `create_target_file()` subsets the data cube, pulls data for a given data and serializes target geotiff to disk.  
