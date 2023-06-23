@@ -2,8 +2,6 @@ suppressPackageStartupMessages(source("packages.R"))
 for (f in list.files(here::here("R"), full.names = TRUE)) source (f)
 
 # Bounding box ------------------------------------------------------------
-# TODO add function and documentation for how this was selected
-# shapefile to be added to github
 # pull box, mask
 fire_box <- fire_bbox(fire = "august_complex", pad_box = FALSE)
 
