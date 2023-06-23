@@ -13,9 +13,10 @@ This repo holds code for a spatially explicit forecasting challenge pipeline to 
 ## Functions
 - `fire_bbox()` reads in a fire boundary shapefile and determines a bounding box for grabbing MODIS data with a padding option. 
 - `ingest_planetary_data()` downloads data from Microsoft planetary comuputer and returns a `gdalcube` data cube proxy object. 
-- `create_target_file()` subsets the data cube and serializes target geotiff to disk.  
-- `spat_climatology()` creates climatology predictions and serializes prediction geotiff to disk. 
-- `scoring_spat_ensemble()` assigns crps and logs scores and serializes scored geotiff to disk.  
+- `create_target_file()` subsets the data cube, pulls data for a given data and serializes target geotiff to disk.  
+- `spat_climatology()` creates climatology predictions and serializes prediction geotiff to disk. Predictions are created using an ensemble of historical data within a given month. If historical data is missing, values are treated as `NA` and bootstrap re-sampling is performed using previous monthly data.
+- `scoring_spat_ensemble()` assigns CRPS (Continuous Ranked Probability Scores) and Logarithmic Scores for a given target file and ensemble forecast. Serializes scored geotiff to disk.
+- `na_bootstrap_fun()` is used internally for re-sampling during creation of climatological forecasts. The function takes a vector `x` of (possibly missing) data and fills `NA` values using a bootstrap re-sampling of non-`NA` values.
 
 ## Next steps
 - Ingest additional fire sites. Potential locations
